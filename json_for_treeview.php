@@ -1,9 +1,5 @@
 <?php
-		$con=mysqli_connect("localhost","root","");
-			if(!$con)
-				die("Cannot Connect" . mysql_error());
-
-		mysqli_select_db($con,'ami');
+		include('database_connection.php');
 		
 		$sql = "SELECT * FROM treeview ";
 	$res = mysqli_query($con, $sql) or die("database error:". mysqli_error($con));

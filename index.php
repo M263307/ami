@@ -41,7 +41,7 @@
 
   </style>
   </head>
-	<h2>Customer Details</h2>
+	<h2>Customer Details</h2><br><br>
    <body>	
 	<div class="container-fluid">
 		<div class="row">
@@ -65,6 +65,19 @@
 					  selected_customer= event.target.textContent;
 					  console.log(selected_customer);
 					  ChangeDetails(selected_customer);
+					  
+					  <?php
+
+								include('database_connection.php');
+
+								$sql="SELECT * FROM customers WHERE visit='Yes'";
+								$data=mysqli_query($con,$sql);
+
+								$record=mysqli_fetch_assoc($data);
+								
+								
+
+								?>
 					});
 				});
 				
@@ -85,7 +98,10 @@
 					});
 					$("#DisplayCustomerDetails").load(" #DisplayCustomerDetails > *");
 					$("#DisplayAddress").load(" #DisplayAddress > *");
-					$("#plant_table").load(" #plant_table > *");
+					$("#form_section").load(" #form_section > *");
+					//$("#plant_table").load(" #plant_table > *");
+					//$("#AddPlantButton").load(" #AddPlantButton > *");
+					$(DisplayCustomerDetails).load(" #DisplayCustomerDetails > *");
 
 				}
 				</script>
@@ -116,15 +132,16 @@
 							  	  var email = $("input#email").val();
 							  	  var phone = $("input#phone").val();
 							  	  var address = $("textarea#address").val();
-							var dataString= 'id='+customerid+ '&name=' +customername+ '&email=' +email+ '&phone=' +phone+ '&address=' +address;
-							$.ajax({
-							type: "POST",
-							url: "AddCustomer.php",
-							data: dataString,
-							success: function(res) {
-							  //alert(res);
-							}
-						  });
+
+								var dataString= 'id='+customerid+ '&name=' +customername+ '&email=' +email+ '&phone=' +phone+ '&address=' +address;
+								$.ajax({
+								type: "POST",
+								url: "AddCustomer.php",
+								data: dataString,
+								success: function(res) {
+								  //alert(res);
+								}
+							  });
 						  
 						});
 						  return false;
@@ -134,10 +151,10 @@
 						</div>	
 						<div class="row">
 							<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="padding-right:0px;">
-								<p style="height:26px;">Customer Name:</p><br>
-								<p style="height:26px;">Customer Id:</p><br>
-								<p style="height:26px;">Email:</p><br>
-								<p style="height:26px;">Phone:</p><br>
+								<p style="height:26px; font-size:13px;"><b>Customer Name:</b></p><br>
+								<p style="height:26px;"><b>Customer Id:</b></p><br>
+								<p style="height:26px;"><b>Email:</b></p><br>
+								<p style="height:26px;"><b>Phone:</b></p><br>
 							</div>
 							<script >
 								
@@ -158,21 +175,9 @@
 								<p ><input type="text" name="email"id="email" ></p><br>
 								<p ><input type="text" name="phone" id="phone" ></p><br>
 							</div>
-							<?php
-
-								include('database_connection.php');
-
-								$sql="SELECT * FROM customers WHERE visit='Yes'";
-								$data=mysqli_query($con,$sql);
-
-								$record=mysqli_fetch_assoc($data);
-								
-								
-
-								?>
 							
 							<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"  id="DisplayCustomerDetails" >
-								<p style="height:26px;"><?php echo $record['name'] ?></p><br>
+								<p style="height:26px; "><?php echo $record['name'] ?></p><br>
 								<p style="height:26px;"><?php echo $record['id'] ?></p><br>
 								<p style="height:26px;"><?php echo $record['email'] ?></p><br>
 								<p style="height:26px;"><?php echo $record['phone'] ?></p><br>
@@ -181,7 +186,7 @@
 								
 							</div>
 							<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="padding-right:0px;">
-								<p >Address of HQ:</p>
+								<p ><b>Address of HQ:</b></p>
 							</div>
 							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="AddressField"style="display:none;">
 								<p ><textarea name="address" rows="4" cols="27" id="address"></textarea></p>
@@ -195,7 +200,7 @@
 		<table width=95% height=10% border=1 id="plant_table"> 
 		<tr>
 		<th>Name</th>
-		<th>Address<button  style="float:right;border-radius: 50%;" id="AddPlant" ><span>&#9998;</span></button></th>
+		<th>Address<button  style="float:right;border-radius: 50%;" id="AddPlantButton" ><span>&#9998;</span></button></th>
 		</tr>
 
 
@@ -249,28 +254,49 @@
 </div>
 
 <script>
-	
-	$('#AddPlant').click( function () {
+	$(document).ready(function() {
+	$('#AddPlantButton').click( function () {
+		//alert("clicked addplant");
     $('.center').show();
     $(this).hide();
 	return false;
 	
-})
+});
+});
 
+$(function() {
+      $(document).on('click', '#AddPlantButton', function(e) {
+            //alert( 'You clicked me' );
+			$('.center').show();
+			$(this).hide();
+			return false;
+	
+      });
+});
+
+$(function() {
+      $(document).on('click', '#close', function(e) {
+            $('.center').hide();
+			$('#AddPlantButton').show();
+			return false;
+      });
+});
+
+
+
+$(document).ready(function() {
 $('#close').click( function () {
     $('.center').hide();
-    $('#AddPlant').show();
+    $('#AddPlantButton').show();
 	return false;
-})
+});
+});
 
+$(document).ready(function() {
 $('#Add').click(function() {
 	<?php
 
-							$con=mysqli_connect("localhost","root","");
-								if(!$con)
-									die("Cannot Connect" . mysql_error());
-
-								mysqli_select_db($con,'ami');
+							include('database_connection.php');
 							if (isset($_POST['plantname'])) 
 							{
 								$name= $_POST['plantname'];
@@ -298,15 +324,17 @@ $('#Add').click(function() {
 							if (isset($_POST['postalCode'])) 
 							{
 								$postalcode= $_POST['postalCode'];
-							
-							
-							
+						
+															
 							$sql_add_plant= "INSERT INTO plants(name,street_address_line_1,city,state,country,postal_code,customer_id) 
 											VALUES('$name','$address','$city','$state','$country','$postalcode','$customer_id')";
 							mysqli_query($con,$sql_add_plant);
 
 							}
 ?>
+					
+window.location.reload();
+});
 });
 </script>
 		

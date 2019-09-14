@@ -7,6 +7,9 @@
 							$phone= $_POST['phone'];
 							$address= $_POST['address'];
 							
+							if (empty($name) && empty($id) && empty($email) && empty($phone) && empty($address)) {
+								return false;
+							}
 							$sql_add_customer= "INSERT INTO customers(name,id,email,phone,street_address_line_1) VALUES('$name','$id','$email','$phone','$address')";
 							$data=mysqli_query($con,$sql_add_customer);
 
