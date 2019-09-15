@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 02, 2019 at 10:58 AM
+-- Generation Time: Sep 15, 2019 at 09:19 PM
 -- Server version: 10.4.6-MariaDB
 -- PHP Version: 7.1.31
 
@@ -36,20 +36,11 @@ CREATE TABLE `customers` (
   `state` varchar(45) NOT NULL,
   `country` varchar(45) NOT NULL,
   `postal_code` varchar(10) NOT NULL,
-  `created_datetime` datetime NOT NULL,
+  `created_datetime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `email` varchar(255) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `visit` varchar(20) DEFAULT 'No'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `customers`
---
-
-INSERT INTO `customers` (`id`, `name`, `street_address_line_1`, `city`, `state`, `country`, `postal_code`, `created_datetime`, `email`, `phone`, `visit`) VALUES
-(1, 'cust1', 'cust1-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 'xyz@abc.org', '123-456-7890', 'No'),
-(2, 'cust2', 'cust2-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 'xyz@abc.org', '123-456-7890', 'No'),
-(3, 'cust3', 'cust3-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 'xyz@abc.org', '123-456-7890', 'Yes');
 
 -- --------------------------------------------------------
 
@@ -70,19 +61,6 @@ CREATE TABLE `inspections` (
   `created_datetime` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `inspections`
---
-
-INSERT INTO `inspections` (`id`, `inspector`, `customer_id`, `plant_id`, `program`, `form_type`, `due_date`, `status`, `form_uploaded`, `created_datetime`) VALUES
-(1, 'ins1', 2, 2, 'environmental', 'monthly', '2019-08-31', 'new', NULL, '2019-08-30 02:25:13'),
-(2, 'ins1', 2, 2, 'environmental', 'monthly', '2019-07-31', 'completed', NULL, '2019-08-30 02:25:13'),
-(3, 'ins1', 2, 2, 'environmental', 'monthly', '2019-06-30', 'completed', NULL, '2019-08-30 02:25:13'),
-(4, 'ins2', 3, 3, 'health & safety', 'quarterly', '2019-08-31', 'new', NULL, '2019-08-30 02:25:13'),
-(5, 'ins2', 3, 3, 'health & safety', 'quarterly', '2019-05-30', 'completed', NULL, '2019-08-30 02:25:13'),
-(6, 'ins5', 3, 3, 'environmental', 'quarterly', '2019-08-31', 'new', NULL, '2019-08-30 02:25:13'),
-(7, 'ins5', 3, 3, 'environmental', 'quarterly', '2019-05-30', 'completed', NULL, '2019-08-30 02:25:13');
-
 -- --------------------------------------------------------
 
 --
@@ -101,22 +79,6 @@ CREATE TABLE `plants` (
   `customer_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `plants`
---
-
-INSERT INTO `plants` (`id`, `name`, `street_address_line_1`, `city`, `state`, `country`, `postal_code`, `created_datetime`, `customer_id`) VALUES
-(1, 'plant1', 'plant1-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 1),
-(2, 'plant2', 'plant2-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 1),
-(3, 'plant3', 'plant3-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 1),
-(4, 'plant4', 'plant4-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 2),
-(5, 'plant5', 'plant5-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 2),
-(6, 'plant6', 'plant6-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 2),
-(7, 'plant7', 'plant7-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 3),
-(8, 'plant8', 'plant8-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 3),
-(9, 'plant9', 'plant9-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 3),
-(10, 'plant0', 'plant0-address-line1', 'detroit', 'MI', 'USA', '48127', '2019-08-30 02:25:13', 3);
-
 -- --------------------------------------------------------
 
 --
@@ -132,52 +94,6 @@ CREATE TABLE `templates` (
   `template_for_download` blob DEFAULT NULL,
   `created_datetime` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `templates`
---
-
-INSERT INTO `templates` (`id`, `form_type`, `customer_id`, `plant_id`, `program`, `template_for_download`, `created_datetime`) VALUES
-(1, 'monthly', 1, 1, 'environmental', NULL, '2019-08-30 02:25:13'),
-(2, 'quarterly', 1, 1, 'environmental', NULL, '2019-08-30 02:25:13'),
-(3, 'monthly', 1, 2, 'environmental', NULL, '2019-08-30 02:25:13'),
-(4, 'quarterly', 1, 2, 'environmental', NULL, '2019-08-30 02:25:13'),
-(5, 'monthly', 1, 3, 'environmental', NULL, '2019-08-30 02:25:13'),
-(6, 'quarterly', 1, 3, 'environmental', NULL, '2019-08-30 02:25:13'),
-(7, 'monthly', 2, 4, 'environmental', NULL, '2019-08-30 02:25:13'),
-(8, 'quarterly', 2, 4, 'environmental', NULL, '2019-08-30 02:25:13'),
-(9, 'monthly', 2, 5, 'environmental', NULL, '2019-08-30 02:25:13'),
-(10, 'quarterly', 2, 5, 'environmental', NULL, '2019-08-30 02:25:13'),
-(11, 'monthly', 2, 6, 'environmental', NULL, '2019-08-30 02:25:13'),
-(12, 'quarterly', 2, 6, 'environmental', NULL, '2019-08-30 02:25:13'),
-(13, 'monthly', 3, 7, 'environmental', NULL, '2019-08-30 02:25:13'),
-(14, 'quarterly', 3, 7, 'environmental', NULL, '2019-08-30 02:25:13'),
-(15, 'monthly', 3, 8, 'environmental', NULL, '2019-08-30 02:25:13'),
-(16, 'quarterly', 3, 8, 'environmental', NULL, '2019-08-30 02:25:13'),
-(17, 'monthly', 3, 9, 'environmental', NULL, '2019-08-30 02:25:13'),
-(18, 'quarterly', 3, 9, 'environmental', NULL, '2019-08-30 02:25:13'),
-(19, 'monthly', 3, 10, 'environmental', NULL, '2019-08-30 02:25:13'),
-(20, 'quarterly', 3, 10, 'environmental', NULL, '2019-08-30 02:25:13'),
-(21, 'monthly', 1, 1, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(22, 'quarterly', 1, 1, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(23, 'monthly', 1, 2, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(24, 'quarterly', 1, 2, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(25, 'monthly', 1, 3, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(26, 'quarterly', 1, 3, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(27, 'monthly', 2, 4, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(28, 'quarterly', 2, 4, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(29, 'monthly', 2, 5, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(30, 'quarterly', 2, 5, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(31, 'monthly', 2, 6, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(32, 'quarterly', 2, 6, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(33, 'monthly', 3, 7, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(34, 'quarterly', 3, 7, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(35, 'monthly', 3, 8, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(36, 'quarterly', 3, 8, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(37, 'monthly', 3, 9, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(38, 'quarterly', 3, 9, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(39, 'monthly', 3, 10, 'health & safety', NULL, '2019-08-30 02:25:13'),
-(40, 'quarterly', 3, 10, 'health & safety', NULL, '2019-08-30 02:25:13');
 
 -- --------------------------------------------------------
 
@@ -196,22 +112,7 @@ CREATE TABLE `treeview` (
 --
 
 INSERT INTO `treeview` (`id`, `name`, `parent_id`) VALUES
-(1, 'CUSTOMERS', 0),
-(2, 'cust2', 1),
-(3, 'plant2', 2),
-(4, 'environmental', 3),
-(5, 'monthly', 4),
-(6, 'ins1', 5),
-(7, 'plant2', 2),
-(8, 'environmental', 7),
-(9, 'monthly', 8),
-(10, 'ins1', 9),
-(11, 'plant2', 2),
-(12, 'environmental', 11),
-(13, 'monthly', 12),
-(14, 'ins1', 13),
-(307, 'cust1', 1),
-(308, 'cust3', 1);
+(1, 'CUSTOMERS', 0);
 
 -- --------------------------------------------------------
 
@@ -307,19 +208,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=485;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67869;
 
 --
 -- AUTO_INCREMENT for table `inspections`
 --
 ALTER TABLE `inspections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `plants`
 --
 ALTER TABLE `plants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 
 --
 -- AUTO_INCREMENT for table `templates`
@@ -331,7 +232,7 @@ ALTER TABLE `templates`
 -- AUTO_INCREMENT for table `treeview`
 --
 ALTER TABLE `treeview`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=465;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=585;
 
 --
 -- AUTO_INCREMENT for table `users`

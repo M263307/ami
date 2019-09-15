@@ -9,7 +9,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css" />
 <script type="text/javascript" charset="utf8" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"></script>
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <style>
 	h2, td, th{
 		text-align: center;
@@ -38,17 +39,21 @@
 	.hideform {
     display: none;
 	}
-
+	
+	.error_form{
+		color:red;
+	}
   </style>
   </head>
 	<h2>Customer Details</h2><br><br>
    <body>	
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5" >
+			<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5" id="tree_view">
 				
 			<div id="treeview" >
 			<script >
+			
 			var selected_customer="none";
 				$(document).ready(function(){ 
 					$.ajax({	
@@ -104,6 +109,7 @@
 					$(DisplayCustomerDetails).load(" #DisplayCustomerDetails > *");
 
 				}
+				
 				</script>
 				
 			</div>
@@ -117,16 +123,21 @@
 					<div class="form-group">
 						<div class="row">
 							<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" >
+							<span class="error_form" id="error_message"></span>
 							</div>
 							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="Button">
 								<button class="btn" style="width:full;" onclick="AddCustomerButton();return false;" >Add Customer</button><br><br>
 							</div>
 							<div  class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="AddButton" style="display:none;">
-								<button type="submit" class="btn" style="width:full;" id="AddButton">Add</button><br><br>
+								<button type="submit" class="btn" style="width:full;" id="AddButton" >Add</button><br><br>
 							</div>
 						<script>
 						$(function() {
-						$("#AddButton").click(function() {
+						//$(document).on("click", "#AddButton", function (event)
+						$("#AddButton").click(function(event) 
+						{
+							event.preventDefault();
+									
 							  	  var customername = $("input#customername").val();
 							  	  var customerid = $("input#customerid").val();
 							  	  var email = $("input#email").val();
@@ -139,9 +150,17 @@
 								url: "AddCustomer.php",
 								data: dataString,
 								success: function(res) {
-								  //alert(res);
+								  //alert("Customer Added Successfully"+res);
+
 								}
-							  });
+							  }).done(function(result){
+								 $("#error_message").html(result); 
+								 $("#error_message").show(); 
+								 
+								 if(result=="Submitted"){
+									 CustomerAdded();
+								 }
+							  })
 						  
 						});
 						  return false;
@@ -165,9 +184,97 @@
 								document.getElementById('DisplayCustomerDetails').style.display = "none";
 								document.getElementById('DisplayAddress').style.display = "none";
 								document.getElementById('Button').style.display = "none";
+								document.getElementById('plant_table').style.display = "none";
 								}
 								
+								function CustomerAdded() {
+									document.getElementById('plant_table').style.display = "block";
+									$("#DisplayCustomerDetails").load(" #DisplayCustomerDetails > *");									
+									$("#form_section").load(" #form_section > *");									
+									//$("#tree_view").load(" #tree_view > *");									
+								}
 								
+								$(function() {
+									
+									$("#error_message").hide();
+									
+									var error_custname= false;
+							
+									$("#customername").focusout(function(){
+										//Checking if field is empty
+										var length = $("#customername").val().length;
+										if(length < 1){
+											$("#error_message").html("Customer Name field cannot be empty");
+											$("#error_message").show();
+											error_custname = true;
+										}
+										else{
+											$("#error_message").hide();
+										}
+										
+										});
+										
+										$("#customerid").focusout(function(){
+										//Checking if field is empty
+										var length = $("#customerid").val().length;
+										if(length < 1){
+											$("#error_message").html("Customer ID field cannot be empty");
+											$("#error_message").show();
+											error_custname = true;
+										}
+										else{
+											$("#error_message").hide();
+										}
+										});
+										
+										$("#email").focusout(function(){
+										//Checking valid email
+										var email = $("#email").val();
+										
+										if(IsEmail(email) == false){
+											$("#error_message").html("Enter valid email address");
+											$("#error_message").show();
+											error_custname = true;
+										}
+										else{
+											$("#error_message").hide();
+										}
+										});
+										
+										$("#phone").focusout(function(){
+										//Checking valid phone
+										var phone = $("#phone").val();
+										
+										if(IsDigit(phone) == false){
+											$("#error_message").html("Enter valid phone number");
+											$("#error_message").show();
+											error_custname = true;
+										}
+										else{
+											$("#error_message").hide();
+										}
+										});
+								
+								
+								});
+								
+								function IsEmail(email) {
+								  var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+								  if(!regex.test(email)) {
+									return false;
+								  }else{
+									return true;
+								  }
+								}
+								
+								function IsDigit(phone) {
+								  var regex = /^\d{10}$/;
+								  if(!regex.test(phone)) {
+									return false;
+								  }else{
+									return true;
+								  }
+								}
 							</script>
 							<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" id="AddCustomerFields" style="display:none;">
 								<p > <input type="text" name="customername" id="customername"></p><br>
@@ -200,7 +307,7 @@
 		<table width=95% height=10% border=1 id="plant_table"> 
 		<tr>
 		<th>Name</th>
-		<th>Address<button  style="float:right;border-radius: 50%;" id="AddPlantButton" ><span>&#9998;</span></button></th>
+		<th>Address<button  style="float:right;border-radius: 50%;" id="AddPlantButton" data-toggle="modal" data-target="#PlantFormModal"><span>&#9998;</span></button></th>
 		</tr>
 
 
@@ -225,72 +332,44 @@
 
 ?>
 
-<div class="center hideform">
-    <button id="close" style="float: right;">X</button>
-    <form method="post" action="index.php">
-        Plant name:<br>
-        <input type="text" name="plantname" value="plant name">
-        <br><br>
-		Customer Id:<br>
-        <input type="text" name="customer_id" value="Customer Id">
-        <br><br>
-        Street Address:<br>
-        <input type="text" name="address" value="address">
-        <br><br>
-		City:<br>
-        <input type="text" name="city" value="city">
-        <br><br>
-		State:<br>
-        <input type="text" name="state" value="state">
-        <br><br>
-		Country:<br>
-        <input type="text" name="country" value="country">
-        <br><br>
-		Postal Code:<br>
-        <input type="text" name="postalCode" value="postal code">
-        <br><br>
-        <input type="submit" value="Add" id="Add"/>
-    </form>
+<div id="PlantFormModal" class="modal fade in" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" >&times;</button>
+				<h4 class="modal-title">Add Plants</h4>			
+			</div>
+			<div class="modal-body">
+			<span  class="error_form" id="error_message_for_plants"></span>	
+			<form method="post" action="index.php">
+				Plant name:<br>
+				<input type="text" name="plantname" id="plantname" value="plant name">
+				<br><br>
+				Street Address:<br>
+				<input type="text" name="address" id="address" value="address">
+				<br><br>
+				City:<br>
+				<input type="text" name="city" id="city" value="city">
+				<br><br>
+				State:<br>
+				<input type="text" name="state" id="state" value="state">
+				<br><br>
+				Country:<br>
+				<input type="text" name="country" id="country" value="country">
+				<br><br>
+				Postal Code:<br>
+				<input type="text" name="postalCode" id="postalCode" value="postal code">
+				<br><br>
+				<input type="submit" value="Add" id="Add"/>	
+			</form>	
+			</div>
+		</div>
+	</div>
 </div>
 
+
+
 <script>
-	$(document).ready(function() {
-	$('#AddPlantButton').click( function () {
-		//alert("clicked addplant");
-    $('.center').show();
-    $(this).hide();
-	return false;
-	
-});
-});
-
-$(function() {
-      $(document).on('click', '#AddPlantButton', function(e) {
-            //alert( 'You clicked me' );
-			$('.center').show();
-			$(this).hide();
-			return false;
-	
-      });
-});
-
-$(function() {
-      $(document).on('click', '#close', function(e) {
-            $('.center').hide();
-			$('#AddPlantButton').show();
-			return false;
-      });
-});
-
-
-
-$(document).ready(function() {
-$('#close').click( function () {
-    $('.center').hide();
-    $('#AddPlantButton').show();
-	return false;
-});
-});
 
 $(document).ready(function() {
 $('#Add').click(function() {
@@ -300,10 +379,6 @@ $('#Add').click(function() {
 							if (isset($_POST['plantname'])) 
 							{
 								$name= $_POST['plantname'];
-							}
-							if (isset($_POST['customer_id'])) 
-							{
-								$customer_id= $_POST['customer_id'];
 							}
 							if (isset($_POST['address'])) 
 							{
@@ -327,21 +402,101 @@ $('#Add').click(function() {
 						
 															
 							$sql_add_plant= "INSERT INTO plants(name,street_address_line_1,city,state,country,postal_code,customer_id) 
-											VALUES('$name','$address','$city','$state','$country','$postalcode','$customer_id')";
+							SELECT '$name','$address','$city','$state','$country','$postalcode', id FROM customers WHERE visit='Yes' ";
 							mysqli_query($con,$sql_add_plant);
-
-							}
+							
+							
+							$sql_treeview_add_plant="INSERT INTO treeview(name,parent_id) SELECT '$name' , id FROM treeview WHERE name IN (SELECT name FROM customers WHERE visit = 'Yes') ";
+							mysqli_query($con,$sql_treeview_add_plant);
+							
+}
 ?>
 					
 window.location.reload();
 });
+});
+
+
+$(function() {
+				$("#error_message_for_plants").hide();
+				
+		
+				$("#plantname").focusout(function(){
+					//Checking if field is empty
+					var length = $("#plantname").val().length;
+					if(length < 1){
+						$(error_message_for_plants).html("Plant name field cannot be empty");
+						$("#error_message_for_plants").show();
+						error_custname = true;
+					}
+					else{
+						$("#error_message_for_plants").hide();
+					}
+					
+					});
+				$("#address").focusout(function(){
+					//Checking if field is empty
+					var length = $("#address").val().length;
+					if(length < 1){
+						$(error_message_for_plants).html("Please enter all fields");
+						$("#error_message_for_plants").show();
+						error_custname = true;}
+					else{$("#error_message_for_plants").hide();}
+					});	
+				$("#address").focusout(function(){
+					//Checking if field is empty
+					var length = $("#address").val().length;
+					if(length < 1){
+						$(error_message_for_plants).html("Please enter all fields");
+						$("#error_message_for_plants").show();
+						error_custname = true;}
+					else{$("#error_message_for_plants").hide();}
+					});	
+				$("#city").focusout(function(){
+					//Checking if field is empty
+					var length = $("#city").val().length;
+					if(length < 1){
+						$(error_message_for_plants).html("Please enter all fields");
+						$("#error_message_for_plants").show();
+						error_custname = true;}
+					else{$("#error_message_for_plants").hide();}
+					});	
+				$("#country").focusout(function(){
+					//Checking if field is empty
+					var length = $("#country").val().length;
+					if(length < 1){
+						$(error_message_for_plants).html("Please enter all fields");
+						$("#error_message_for_plants").show();
+						error_custname = true;}
+					else{$("#error_message_for_plants").hide();}
+					});		
+				$("#postalCode").focusout(function(){
+					//Checking if field is empty
+					var length = $("#postalCode").val().length;
+					if(length < 1){
+						$(error_message_for_plants).html("Please enter all fields");
+						$("#error_message_for_plants").show();
+						error_custname = true;}
+					else{$("#error_message_for_plants").hide();}
+					});		
+				$("#state").focusout(function(){
+					//Checking if field is empty
+					var length = $("#state").val().length;
+					if(length < 1){
+						$(error_message_for_plants).html("Please enter all fields");
+						$("#error_message_for_plants").show();
+						error_custname = true;}
+					else{$("#error_message_for_plants").hide();}
+					});		
+					
+					
+					
 });
 </script>
 		
 		</div>
 	</div>
 	</div>
-
 	</body>
 <footer style="height:30px;">
 <script>

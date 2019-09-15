@@ -4,7 +4,7 @@
 					
 						$parent_id=1;
 					$data=$_POST['data'];
-					$query = mysqli_query($con,"SELECT * FROM customers WHERE name='$data'");
+					$query = mysqli_query($con,"SELECT id FROM customers WHERE name='$data'");
 					if($query!=false){
 					if(mysqli_num_rows($query) > 0 )
 					{
